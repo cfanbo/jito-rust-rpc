@@ -7,6 +7,26 @@
 
 The Jito JSON-RPC Rust SDK provides an interface for interacting with Jito's enhanced Solana infrastructure. This SDK supports methods for managing bundles and transactions, offering improved performance and additional features while interacting with the Block Engine.
 
+### Usage
+```
+let sdk = JitoJsonRpcSDK::new("https://mainnet.block-engine.jito.wtf/api/v1", None);
+let accounts = sdk.get_tip_accounts().await?;
+```
+Change to
+```
+let sdk = JitoJsonRpcSDK::new_with_ip_pool(
+    "https://mainnet.block-engine.jito.wtf/api/v1",
+    None,
+    vec![
+        "92.106.2.16".to_string(),
+        "92.106.2.17".to_string(),
+        "92.106.2.18".to_string(),
+    ],
+    IpSelectAlgorithm::Random,
+)?;
+let accounts = sdk.get_tip_accounts().await?;
+```
+
 ## Features
 
 ### Bundles
