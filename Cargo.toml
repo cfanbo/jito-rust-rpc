@@ -23,7 +23,7 @@ base64 = "0.21.0"  # Added base64 to main dependencies
 rand = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-
+thiserror = "2.0.12"
 # Remove the [[example]] section if it exists
 
 [dev-dependencies]
