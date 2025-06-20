@@ -4,6 +4,7 @@ use rand::Rng;
 use reqwest::Client;
 use std::net::IpAddr;
 use std::sync::{Arc, Mutex};
+use tracing::debug;
 
 #[derive(Debug, thiserror::Error)]
 pub enum HttpClientError {
@@ -82,7 +83,7 @@ impl HttpClient {
                 selected
             }
         };
-
+        debug!("selected ip index: {}", index);
         self.clients[index].clone()
     }
 }

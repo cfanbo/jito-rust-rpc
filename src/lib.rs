@@ -5,7 +5,7 @@ use serde_json::{json, Value};
 use std::{fmt, net::IpAddr};
 use tracing::{debug, trace};
 
-mod http_client;
+pub mod http_client;
 use http_client::{HttpClient, IpSelectAlgorithm};
 
 pub struct JitoJsonRpcSDK {
@@ -13,7 +13,7 @@ pub struct JitoJsonRpcSDK {
     uuid: Option<String>,
     client: Client,
     // ip pool
-    client_pool: HttpClient,
+    client_pool: Option<HttpClient>,
 }
 
 #[derive(Debug)]
@@ -32,7 +32,7 @@ impl From<Value> for PrettyJsonValue {
 }
 
 impl JitoJsonRpcSDK {
-    pub fn new_pool(
+    pub fn new_with_ip_pool(
         base_url: &str,
         uuid: Option<String>,
         ips: Vec<String>,
@@ -51,12 +51,12 @@ impl JitoJsonRpcSDK {
             base_url: base_url.to_string(),
             uuid,
             client: Client::new(),
-            client_pool: client_pool,
+            client_pool: Some(client_pool),
         })
     }
 
     pub fn client(&self) -> Client {
-        self.client_pool.get_client()
+        self.client_pool.as_ref().unwrap().get_client()
     }
 }
 
@@ -66,7 +66,7 @@ impl JitoJsonRpcSDK {
             base_url: base_url.to_string(),
             uuid,
             client: Client::new(),
-            client_pool: HttpClient::default(),
+            client_pool: None,
         }
     }
 
@@ -91,13 +91,21 @@ impl JitoJsonRpcSDK {
             serde_json::to_string_pretty(&data).unwrap()
         );
 
-        let response = self
-            .client
-            .post(&url)
-            .header("Content-Type", "application/json")
-            .json(&data)
-            .send()
-            .await?;
+        let response = if self.client_pool.is_some() {
+            self.client()
+                .post(&url)
+                .header("Content-Type", "application/json")
+                .json(&data)
+                .send()
+                .await?
+        } else {
+            self.client
+                .post(&url)
+                .header("Content-Type", "application/json")
+                .json(&data)
+                .send()
+                .await?
+        };
 
         let status = response.status();
         debug!("Response status: {}", status);
