@@ -18,9 +18,10 @@ let sdk = JitoJsonRpcSDK::new_with_ip_pool(
     "https://mainnet.block-engine.jito.wtf/api/v1",
     None,
     vec![
-        "92.106.2.16".to_string(),
-        "92.106.2.17".to_string(),
-        "92.106.2.18".to_string(),
+        IpAddr::V4("92.106.2.16".parse().unwrap()),
+        IpAddr::V4("92.106.2.17".parse().unwrap()),
+        IpAddr::V4("92.106.2.18".parse().unwrap()),
+        IpAddr::V6("2001:db8::1".parse().unwrap())
     ],
     IpSelectAlgorithm::Random,
 )?;

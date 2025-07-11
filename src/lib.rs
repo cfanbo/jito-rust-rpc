@@ -35,17 +35,9 @@ impl JitoJsonRpcSDK {
     pub fn new_with_ip_pool(
         base_url: &str,
         uuid: Option<String>,
-        ips: Vec<String>,
+        ips: Vec<IpAddr>,
         algorithm: IpSelectAlgorithm,
     ) -> Result<Self> {
-        let ips: Vec<IpAddr> = ips
-            .into_iter()
-            .map(|s| {
-                s.parse::<IpAddr>()
-                    .map_err(|e| anyhow!("Parse ip failed: {} {}", s, e))
-            })
-            .collect::<Result<Vec<_>>>()?;
-
         let client_pool = HttpClient::new(ips, algorithm)?;
         Ok(Self {
             base_url: base_url.to_string(),
