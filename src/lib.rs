@@ -6,7 +6,8 @@ use std::{fmt, net::IpAddr};
 use tracing::{debug, trace};
 
 pub mod http_client;
-use http_client::{HttpClient, IpSelectAlgorithm};
+use http_client::HttpClient;
+pub use http_client::IpSelectAlgorithm;
 
 pub struct JitoJsonRpcSDK {
     base_url: String,
